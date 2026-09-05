@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+generated-kubeconfig.yaml
+audit.log
+rbac_mapping.yaml
+node_modules/
+dist/
+.DS_Store
+scripts/recordings/*.webm
