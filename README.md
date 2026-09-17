@@ -419,19 +419,17 @@ PORT: 80
 
 ## 14. Application Screenshots
 
-### Login
+### 1. Dashboard Login
 
-![EKS Dashboard Login](docs/images/01-login.png)
+![EKS Dashboard Login](01-login.png)
 
-### Dashboard
+### 2. Kubernetes Dashboard
 
-![EKS Dashboard](docs/images/02-dashboard.png)
+![EKS Dashboard](02-dashboard.png)
 
-### Live Pod Logs
+### 3. Live Pod Logs
 
-The Logs feature now streams Kubernetes pod logs through WebSocket.
-
-![Live Pod Logs](docs/images/03-live-logs.png)
+![Live Pod Logs](03-live-logs.png)
 
 ------------------------------------------------------------------------
 
