@@ -45,8 +45,17 @@ async def stream_pod_logs(websocket: WebSocket, namespace: str, name: str, conta
 
     try:
         resp = await loop.run_in_executor(None, _blocking_stream)
-        for line in resp.stream(amt=1024, decode_content=True):
-            await websocket.send_text(line if isinstance(line, str) else line.decode(errors="replace"))
+
+        def _read_line():
+            return next(resp.stream(amt=1024, decode_content=True), None)
+
+        while True:
+            line = await loop.run_in_executor(None, _read_line)
+            if line is None:
+                break
+            await websocket.send_text(
+                line if isinstance(line, str) else line.decode(errors="replace")
+            )
     except WebSocketDisconnect:
         pass
     except Exception as exc:  # noqa: BLE001 - surface stream errors to the client

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eks-dashboard-frontend
+  namespace: eks-dashboard
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: eks-dashboard-frontend
+  template:
+    metadata:
+      labels:
+        app: eks-dashboard-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: 274955213592.dkr.ecr.ap-south-1.amazonaws.com/eks-dashboard-frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 20
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: eks-dashboard-frontend
+  namespace: eks-dashboard
+spec:
+  type: LoadBalancer
+  selector:
+    app: eks-dashboard-frontend
+  ports:
+    - port: 80
+      targetPort: 80

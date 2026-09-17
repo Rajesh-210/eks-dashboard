@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eks-dashboard-backend
+  namespace: eks-dashboard
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: eks-dashboard-backend
+  template:
+    metadata:
+      labels:
+        app: eks-dashboard-backend
+    spec:
+      serviceAccountName: eks-dashboard-backend
+      containers:
+        - name: backend
+          image: 274955213592.dkr.ecr.ap-south-1.amazonaws.com/eks-dashboard-backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: AWS_REGION
+              value: "ap-south-1"
+            - name: AWS_DEFAULT_REGION
+              value: "ap-south-1"
+            - name: EKS_CLUSTER_NAME
+              value: "eks-dashboard"
+            - name: FRONTEND_ORIGIN
+              value: "http://43.205.211.6:80"
+            - name: DEV_LOGIN_ENABLED
+              value: "true"
+            - name: DEV_USERS
+              value: "admin:admin123:admins"
+            - name: JWT_SECRET
+              value: "CHANGE_THIS_BEFORE_PRODUCTION"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: eks-dashboard-backend
+  namespace: eks-dashboard
+spec:
+  type: ClusterIP
+  selector:
+    app: eks-dashboard-backend
+  ports:
+    - port: 8000
+      targetPort: 8000
